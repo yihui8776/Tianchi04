@@ -68,7 +68,27 @@ test_pipeline = Compose(test_pipeline)
 
 def get_mask(image, meta, pixels):
     mask = torch.zeros((1,3,500,500)).cuda()
-    bbox, label = model2(return_loss=False, rescale=True, img=image, img_metas=meta)
+    #bbox, label = model2(return_loss=False, rescale=True, img=image, img_metas=meta)
+    #返回的是model tensor  ，list
+    m = model2(return_loss=False, rescale=True, img=image, img_metas=meta)
+
+    lbbox = []
+    llabel = []
+
+    k = 0  #bbox
+    for i in range(len(m[0])):
+        if len(m[0][i]) > 0:  #取出非空的元素 就是有检测出的label ，id对应数组下标
+            print(len(m[0][i]))
+            for j in range(len(m[0][i])):  #第i个label的包围盒个数
+                lbbox.append(m[0][i][j])
+                print(m[0][i][j])
+                llabel.append(i)
+                print(llabel)
+                k = k + 1
+    #转为数组
+    bbox = np.array(lbbox)
+    label = np.array(llabel)
+
     bbox = bbox[bbox[:,4]>0.3]
     num = bbox.shape[0]
     if num > 10: num = 10
@@ -93,7 +113,26 @@ def get_mask(image, meta, pixels):
 
 def get_mask2(image, meta, pixels):
     mask = torch.zeros((1,3,500,500)).cuda()
-    bbox, label = model2(return_loss=False, rescale=True, img=image, img_metas=meta)
+    #bbox, label = model2(return_loss=False, rescale=True, img=image, img_metas=meta)
+    m = model2(return_loss=False, rescale=True, img=image, img_metas=meta)
+
+    lbbox = []
+    llabel = []
+
+    k = 0
+    for i in range(len(m[0])):
+        if len(m[0][i]) > 0:
+            print(len(m[0][i]))
+            for j in range(len(m[0][i])):
+                lbbox.append(m[0][i][j])
+                print(m[0][i][j])
+                llabel.append(i)
+                print(llabel)
+                k = k + 1
+
+    bbox = np.array(lbbox)
+    label = np.array(llabel)
+
     bbox = bbox[bbox[:,4]>0.3]
     num = bbox.shape[0]
     if num > 10: num = 10
