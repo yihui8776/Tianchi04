@@ -205,10 +205,19 @@ for file in files:
         Img2 = F.interpolate(imgp, size=(800, 800), mode='bilinear', align_corners=True)
         ImgNor = nor(Img2.squeeze(0))
         data['img'] = [ImgNor.unsqueeze(0)]
-        out2 = model2(return_loss=False, rescale=True, img=data['img'], img_metas=data['img_metas'])
-                
+        #out2 = model2(return_loss=False, rescale=True, img=data['img'], img_metas=data['img_metas'])
+        m = model2(return_loss=False ,rescale=True ,img=data['img'],img_metas=data['img_metas'])
+        bbox = []
+        for i in range(len(m[0])):
+            if len(m[0][i]) > 0:
+                print(len(m[0][i]))
+                for j in range(len(m[0][i])):
+                    bbox.append(m[0][i][j])
+                    print(m[0][i][j])
+
+        out2 = torch.tensor(bbox)
         loss1 = torch.max(out1[1])
-        loss2 = torch.max(out2[0][:,4])
+        loss2 = torch.max(out2[:,4])
         
         loss = loss1 + loss2
         print('Num:{:4d}, Iter:{:4d}, Loss:{:.4f}, LossYOLO:{:.4f}, LossFRCNN:{:.4f}'.format(count, i, loss.item(), loss1.item(), loss2.item()))
@@ -239,10 +248,20 @@ for file in files:
             Img2 = F.interpolate(imgp, size=(800, 800), mode='bilinear', align_corners=True)
             ImgNor = nor(Img2.squeeze(0))
             data['img'] = [ImgNor.unsqueeze(0)]
-            out2 = model2(return_loss=False, rescale=True, img=data['img'], img_metas=data['img_metas'])
-                    
+            #out2 = model2(return_loss=False, rescale=True, img=data['img'], img_metas=data['img_metas'])
+            m = model2(return_loss=False, rescale=True, img=data['img'], img_metas=data['img_metas'])
+            bbox = []
+            for i in range(len(m[0])):
+                if len(m[0][i]) > 0:
+                    print(len(m[0][i]))
+                    for j in range(len(m[0][i])):
+                        bbox.append(m[0][i][j])
+                        print(m[0][i][j])
+
+            out2 = torch.tensor(bbox)
+
             loss1 = torch.max(out1[1])
-            loss2 = torch.max(out2[0][:,4])
+            loss2 = torch.max(out2[:,4])
             
             loss = loss1 + loss2
             print('Num:{:4d}, Iter:{:4d}, Loss:{:.4f}, LossYOLO:{:.4f}, LossFRCNN:{:.4f}'.format(count, i, loss.item(), loss1.item(), loss2.item()))
@@ -274,12 +293,24 @@ for file in files:
             Img2 = F.interpolate(imgp, size=(800, 800), mode='bilinear', align_corners=True)
             ImgNor = nor(Img2.squeeze(0))
             data['img'] = [ImgNor.unsqueeze(0)]
-            out2 = model2(return_loss=False, rescale=True, img=data['img'], img_metas=data['img_metas'])
-                    
+            #out2 = model2(return_loss=False, rescale=True, img=data['img'], img_metas=data['img_metas'])
+            m = model2(return_loss=False, rescale=True, img=data['img'], img_metas=data['img_metas'])
+            bbox = []
+            for i in range(len(m[0])):
+                if len(m[0][i]) > 0:
+                    print(len(m[0][i]))
+                    for j in range(len(m[0][i])):
+                        bbox.append(m[0][i][j])
+                        print(m[0][i][j])
+
+            out2 = torch.tensor(bbox)
             loss1 = torch.max(out1[1])
-            loss4 = torch.mean(out2[0][:,4])
-            loss3 = torch.sum(out2[0][:,4]>0.3)
-            loss2 = torch.max(out2[0][:,4])
+            loss2 = torch.max(out2[:, 4])
+                    
+            #loss1 = torch.max(out1[1])
+            loss4 = torch.mean(out2[:,4])
+            loss3 = torch.sum(out2[:,4]>0.3)
+            #loss2 = torch.max(out2[0][:,4])
             
             loss = loss1 + loss4 + loss3
             print('Num:{:4d}, Iter:{:4d}, Loss:{:.4f}, LossYOLO:{:.4f}, LossFRCNN:{:.4f}, BoxNum:{:.2f}'.format(count, i, loss.item(), loss1.item(), loss4.item(), loss3.item()))
